@@ -20,44 +20,54 @@ import OrganizationPage from './pages/organization/OrganizationPage';
 
 import { AppProvider } from '@shopify/polaris';
 import AcceptInvitationPage from './pages/invitations/AcceptInvitationPage';
+import Login from './Login';
 
 const AppRoutes = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { data, loading, error } = useMeQuery();
-  if (loading) {
-    return <div>loading</div>;
-  } else if (error) {
-    return <div>{JSON.stringify(error)}</div>;
-  } else {
-    if (location.pathname == '/') {
-      const lastVisitedProject = data?.me.lastVisitedProject;
-      const projects = data?.me.projects ?? [];
-      const navigateToProjectPath =
-        lastVisitedProject?.slug ?? projects[0]?.slug;
-      if (navigateToProjectPath) {
-        navigate(`/${navigateToProjectPath}`);
-      } else {
-        navigate('/new');
-      }
-    }
-    return (
-      <Routes>
-        <Route
-          path="/invitations/:token"
-          element={<AcceptInvitationPage />}
-        />
-        <Route path="/:accountName/:projectName" element={<Home />}>
-          <Route path="" element={<Dashboard />} />
-          <Route path="remote-cache" element={<RemoteCachePage />} />
-          <Route path="organization" element={<OrganizationPage />} />
-        </Route>
-        <Route path="/new" element={<NewProject />} />
-        <Route element={<NoPageFound />} />
-      </Routes>
-    );
+  const routes = (
+    <Routes>
+      <Route
+        path="/invitations/:token"
+        element={<AcceptInvitationPage />}
+      />
+      <Route path="/:accountName/:projectName" element={<Home />}>
+        <Route path="" element={<Dashboard />} />
+        <Route path="remote-cache" element={<RemoteCachePage />} />
+        <Route path="organization" element={<OrganizationPage />} />
+      </Route>
+      <Route path="/new" element={<NewProject />} />
+      <Route path="/users/sign_in" element={<Login />} />
+      <Route element={<NoPageFound />} />
+    </Routes>
+  );
+
+  // const { data, loading, error } = useMeQuery();
+
+  if (location.pathname === '/users/sign_in') {
+    return routes;
   }
+
+  return routes;
+  // if (loading) {
+  //   return <div>loading</div>;
+  // } else if (error) {
+  //   return <div>{JSON.stringify(error)}</div>;
+  // } else {
+  //   if (location.pathname == '/') {
+  //     const lastVisitedProject = data?.me.lastVisitedProject;
+  //     const projects = data?.me.projects ?? [];
+  //     const navigateToProjectPath =
+  //       lastVisitedProject?.slug ?? projects[0]?.slug;
+  //     if (navigateToProjectPath) {
+  //       navigate(`/${navigateToProjectPath}`);
+  //     } else {
+  //       navigate('/new');
+  //     }
+  //   }
+  //   return routes;
+  // }
 };
 
 const App = (): JSX.Element => {
